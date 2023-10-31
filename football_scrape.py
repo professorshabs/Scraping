@@ -2,6 +2,9 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+import pandas as pd
+import time
 
 # options for easier browsing:
 def get_driver(site_url):
@@ -23,9 +26,18 @@ def get_driver(site_url):
 # https://www.adamchoi.co.uk/overs/detailed
 driver = get_driver("https://www.adamchoi.co.uk/overs/detailed")
 # xpath://*[@id="page-wrapper"]/div/home-away-selector/div/div/div/div/label[2]
+
 all_matches_button = driver.find_element("xpath", "//label[@analytics-event='All matches']")
 #all_matches_button = driver.find_element("xpath","//*[@id='side-menu']/li[1]/a")
 all_matches_button.click()
+
+dropdown = Select(driver.find_element(By.ID,"country"))
+dropdown.select_by_visible_text('Spain')
+
+time.sleep(3)
+dropdown2 = Select(driver.find_element(By.ID,"season"))
+dropdown2.select_by_visible_text('22/23')
+time.sleep(3)
 
 matches = driver.find_elements(By.TAG_NAME, "tr")
 dates = []
@@ -42,6 +54,8 @@ for match in matches:
 
     data_dict.append(diction)
 
-    print(f"date {diction['date']}, home team: {diction['home_team']} vs away {diction['away_team']} and score {diction['score']}")
-    print(data_dict[3])
+    #print(f"date {diction['date']}, home team: {diction['home_team']} vs away {diction['away_team']} and score {diction['score']}")
+print(data_dict[3])
+df = pd.DataFrame(data_dict)
+print(df.head(5))
 # driver. quit()
